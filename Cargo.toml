@@ -1,0 +1,14 @@
+[package]
+name = "crabby"
+version = "0.1.0"
+edition = "2021"
+description = "A pointless cli game about squashing bugs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+crossterm = "0.17"
+#crossterm = "0.23.2"
+rand = "0.7.3"
+#rand = "0.8.5"
+color-eyre = "0.6.0"
