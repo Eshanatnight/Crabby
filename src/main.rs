@@ -1,31 +1,20 @@
-use std::io::{stdout, Write};
+use color_eyre::eyre::Result;
 use rand::{thread_rng, Rng};
-use color_eyre::eyre::{Result};
+use std::io::{stdout, Write};
 
 use crossterm::{
-    cursor::
-    {
-        DisableBlinking, Hide, MoveTo
-    },
-    event::
-    {
-        read, Event, KeyCode, KeyEvent, KeyModifiers
-    },
-    execute,
-    queue,
-    style::
-    {
-        Color, Print, SetBackgroundColor, SetForegroundColor
-    },
-    terminal::
-    {
-        disable_raw_mode, size, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen, SetTitle
+    cursor::{DisableBlinking, Hide, MoveTo},
+    event::{read, Event, KeyCode, KeyEvent, KeyModifiers},
+    execute, queue,
+    style::{Color, Print, SetBackgroundColor, SetForegroundColor},
+    terminal::{
+        disable_raw_mode, enable_raw_mode, size, EnterAlternateScreen, LeaveAlternateScreen,
+        SetTitle,
     },
 };
 
 #[allow(non_snake_case)]
-fn printEvents() -> Result<()>
-{
+fn printEvents() -> Result<()> {
     let cactus = "🌵";
     let player = "🦀";
     let bug = "🐛";
@@ -44,12 +33,9 @@ fn printEvents() -> Result<()>
 
     grid[rng.gen_range(1, max_x) as usize][rng.gen_range(1, max_y) as usize] = 2;
 
-    for x in 0..max_x
-    {
-        for y in 0..max_y
-        {
-            if grid[x as usize][y as usize] == 0
-            {
+    for x in 0..max_x {
+        for y in 0..max_y {
+            if grid[x as usize][y as usize] == 0 {
                 queue!(stdout, MoveTo(x * 2, y))
                     .map_err(|err| println!("{:?}", err))
                     .ok();
@@ -59,8 +45,7 @@ fn printEvents() -> Result<()>
                     .ok();
             }
 
-            if grid[x as usize][y as usize] == 1
-            {
+            if grid[x as usize][y as usize] == 1 {
                 queue!(stdout, MoveTo(x * 2, y))
                     .map_err(|err| println!("{:?}", err))
                     .ok();
@@ -70,8 +55,7 @@ fn printEvents() -> Result<()>
                     .ok();
             }
 
-            if x == player_x && y == player_y
-            {
+            if x == player_x && y == player_y {
                 queue!(stdout, MoveTo(x * 2, y))
                     .map_err(|err| println!("{:?}", err))
                     .ok();
@@ -81,8 +65,7 @@ fn printEvents() -> Result<()>
                     .ok();
             }
 
-            if grid[x as usize][y as usize] == 2
-            {
+            if grid[x as usize][y as usize] == 2 {
                 queue!(stdout, MoveTo(x * 2, y))
                     .map_err(|err| println!("{:?}", err))
                     .ok();
@@ -96,11 +79,11 @@ fn printEvents() -> Result<()>
 
     stdout.flush().map_err(|err| println!("{:?}", err)).ok();
 
-    loop
-    {
+    loop {
         let event = read()?;
 
-        if event == Event::Key(KeyEvent {
+        if event
+            == Event::Key(KeyEvent {
                 code: KeyCode::Char('c').into(),
                 modifiers: KeyModifiers::CONTROL,
             })
@@ -108,30 +91,25 @@ fn printEvents() -> Result<()>
             break;
         }
 
-        if event == Event::Key(KeyCode::Up.into())
-        {
-            if player_y > 0
-            {
+        if event == Event::Key(KeyCode::Up.into()) {
+            if player_y > 0 {
                 player_y = player_y - 1;
                 execute!(stdout, MoveTo(player_x * 2, player_y + 1))?;
                 println!("  ");
                 execute!(stdout, MoveTo(player_x * 2, player_y))?;
                 println!("🦀");
 
-                if grid[player_x as usize][player_y as usize] == 2
-                {
+                if grid[player_x as usize][player_y as usize] == 2 {
                     // grid[player_x as usize][player_y as usize] = 0;
                     let mut i_x = rng.gen_range(0, max_x);
-                    let mut i_y = rng.gen_range(0, max_y-1);
+                    let mut i_y = rng.gen_range(0, max_y - 1);
 
-                    while i_x == player_x
-                    {
+                    while i_x == player_x {
                         i_x = rng.gen_range(0, max_x);
                     }
 
-                    while i_y == player_y
-                    {
-                        i_y = rng.gen_range(0, max_y-1);
+                    while i_y == player_y {
+                        i_y = rng.gen_range(0, max_y - 1);
                     }
 
                     grid[i_x as usize][i_y as usize] = 2;
@@ -141,30 +119,25 @@ fn printEvents() -> Result<()>
             };
         }
 
-        if event == Event::Key(KeyCode::Down.into())
-        {
-            if player_y < max_y - 2
-            {
+        if event == Event::Key(KeyCode::Down.into()) {
+            if player_y < max_y - 2 {
                 player_y = player_y + 1;
                 execute!(stdout, MoveTo(player_x * 2, player_y - 1))?;
                 println!("  ");
                 execute!(stdout, MoveTo(player_x * 2, player_y))?;
                 println!("🦀");
 
-                if grid[player_x as usize][player_y as usize] == 2
-                {
+                if grid[player_x as usize][player_y as usize] == 2 {
                     // grid[player_x as usize][player_y as usize] = 0;
                     let mut i_x = rng.gen_range(0, max_x);
-                    let mut i_y = rng.gen_range(0, max_y-1);
+                    let mut i_y = rng.gen_range(0, max_y - 1);
 
-                    while i_x == player_x
-                    {
+                    while i_x == player_x {
                         i_x = rng.gen_range(0, max_x);
                     }
 
-                    while i_y == player_y
-                    {
-                        i_y = rng.gen_range(0, max_y-1);
+                    while i_y == player_y {
+                        i_y = rng.gen_range(0, max_y - 1);
                     }
 
                     grid[i_x as usize][i_y as usize] = 2;
@@ -174,30 +147,25 @@ fn printEvents() -> Result<()>
             };
         }
 
-        if event == Event::Key(KeyCode::Right.into())
-        {
-            if player_x < max_x - 1
-            {
+        if event == Event::Key(KeyCode::Right.into()) {
+            if player_x < max_x - 1 {
                 player_x = player_x + 1;
                 execute!(stdout, MoveTo(player_x * 2 - 2, player_y))?;
                 println!("  ");
                 execute!(stdout, MoveTo(player_x * 2, player_y))?;
                 println!("🦀");
 
-                if grid[player_x as usize][player_y as usize] == 2
-                {
+                if grid[player_x as usize][player_y as usize] == 2 {
                     // grid[player_x as usize][player_y as usize] = 0;
                     let mut i_x = rng.gen_range(0, max_x);
-                    let mut i_y = rng.gen_range(0, max_y-1);
+                    let mut i_y = rng.gen_range(0, max_y - 1);
 
-                    while i_x == player_x
-                    {
+                    while i_x == player_x {
                         i_x = rng.gen_range(0, max_x);
                     }
 
-                    while i_y == player_y
-                    {
-                        i_y = rng.gen_range(0, max_y-1);
+                    while i_y == player_y {
+                        i_y = rng.gen_range(0, max_y - 1);
                     }
 
                     grid[i_x as usize][i_y as usize] = 2;
@@ -207,30 +175,25 @@ fn printEvents() -> Result<()>
             };
         }
 
-        if event == Event::Key(KeyCode::Left.into())
-        {
-            if player_x > 0
-            {
+        if event == Event::Key(KeyCode::Left.into()) {
+            if player_x > 0 {
                 player_x = player_x - 1;
                 execute!(stdout, MoveTo(player_x * 2 + 2, player_y))?;
                 println!("  ");
                 execute!(stdout, MoveTo(player_x * 2, player_y))?;
                 println!("🦀");
 
-                if grid[player_x as usize][player_y as usize] == 2
-                {
+                if grid[player_x as usize][player_y as usize] == 2 {
                     // grid[player_x as usize][player_y as usize] = 0;
                     let mut i_x = rng.gen_range(0, max_x);
-                    let mut i_y = rng.gen_range(0, max_y-1);
+                    let mut i_y = rng.gen_range(0, max_y - 1);
 
-                    while i_x == player_x
-                    {
+                    while i_x == player_x {
                         i_x = rng.gen_range(0, max_x);
                     }
 
-                    while i_y == player_y
-                    {
-                        i_y = rng.gen_range(0, max_y-1);
+                    while i_y == player_y {
+                        i_y = rng.gen_range(0, max_y - 1);
                     }
 
                     grid[i_x as usize][i_y as usize] = 2;
@@ -244,8 +207,7 @@ fn printEvents() -> Result<()>
     Ok(())
 }
 
-fn main() -> Result<()>
-{
+fn main() -> Result<()> {
     enable_raw_mode()?;
 
     let mut stdout = stdout();
@@ -264,15 +226,11 @@ fn main() -> Result<()>
         })
     )?;
 
-    if let Err(e) = printEvents()
-    {
+    if let Err(e) = printEvents() {
         eprintln!("Error: {:?}\r", e);
     }
 
-    execute!(
-        stdout,
-        LeaveAlternateScreen
-    )?;
+    execute!(stdout, LeaveAlternateScreen)?;
 
     disable_raw_mode()?;
     Ok(())
